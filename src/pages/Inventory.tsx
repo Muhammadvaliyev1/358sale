@@ -2,7 +2,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Truck, Plus, Package, RefreshCw, Trash2, Search, Edit3, X } from 'lucide-react';
 import { useApp } from '../App';
-import { ProductType, Product } from '../services/types';
+import { ProductType, } from '../services/types';
+import type { Product } from '../services/types';
 
 const InventoryPage: React.FC = () => {
   const { products, setProducts, setCart } = useApp();
@@ -11,7 +12,7 @@ const InventoryPage: React.FC = () => {
   const [restockSearch, setRestockSearch] = useState('');
   
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [newProd, setNewProd] = useState({ name: '', price: '', type: ProductType.PIECE, weightPerBox: '' });
+  const [newProd, setNewProd] = useState<{ name: string; price: string; type: ProductType; weightPerBox: string }>({ name: '', price: '', type: ProductType.PIECE, weightPerBox: '' });
   const [restock, setRestock] = useState({ productId: '', amount: '', costPrice: '' });
 
   useEffect(() => {
@@ -35,6 +36,7 @@ const InventoryPage: React.FC = () => {
       stock: 0,
       weightPerBox: newProd.type === ProductType.BOXED ? parseFloat(newProd.weightPerBox) || 1 : undefined
     };
+    
     
     setProducts(prev => [product, ...prev]);
     setNewProd({ name: '', price: '', type: ProductType.PIECE, weightPerBox: '' });

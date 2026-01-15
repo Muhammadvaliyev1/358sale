@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { Users, Search, Plus, Minus, Phone, DollarSign, UserCircle, Edit3, X } from 'lucide-react';
+import { Search, Plus, Phone, DollarSign, UserCircle, Edit3, X } from 'lucide-react';
 import { useApp } from '../App';
-import { Client } from '../services/types';
+import type { Client } from '../services/types';
 
 const ClientsPage: React.FC = () => {
   const { clients, setClients, setSales } = useApp();

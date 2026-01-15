@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { FileText, User, TrendingUp, TrendingDown, Truck, ArrowRightLeft, Banknote, CreditCard, ShieldAlert, Users, UsersRound, Calendar, Search } from 'lucide-react';
+import { FileText, TrendingUp, TrendingDown, ArrowRightLeft, Banknote, CreditCard, ShieldAlert, Users, UsersRound, Calendar, Search } from 'lucide-react';
 import { useApp } from '../App';
 import { PaymentMethod } from '../services/types';
 

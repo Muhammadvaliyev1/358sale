@@ -2,10 +2,11 @@
 import React, { useState } from 'react';
 import { Search, Plus, Box } from 'lucide-react';
 import { useApp } from '../App';
-import { Product, ProductType } from '../services/types';
+import type { Product } from '../services/types';
+import { ProductType } from '../services/types';
 
 const ProductsPage: React.FC = () => {
-  const { products, addToCart, cart } = useApp();
+  const { products, addToCart } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredProducts = products.filter(p => 

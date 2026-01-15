@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import { Truck, UsersRound, Phone, Plus, Minus, Search, Building2, DollarSign, Edit3, X } from 'lucide-react';
+import { Phone, Plus, Search, Building2, Edit3, X } from 'lucide-react';
 import { useApp } from '../App';
-import { Supplier, PaymentMethod, SupplierTransaction, SupplierPayment } from '../services/types';
+import { PaymentMethod, } from '../services/types';
+import type { Supplier, SupplierTransaction, SupplierPayment } from '../services/types';
 
 const SuppliersPage: React.FC = () => {
   const { suppliers, setSuppliers, setSupplierTransactions, setSupplierPayments } = useApp();

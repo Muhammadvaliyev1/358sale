@@ -1,33 +1,49 @@
+export const typesLoaded = true;
+console.log('types.ts loaded');
 
-export enum ProductType {
-  PIECE = 'piece',
-  WEIGHT = 'weight',
-  BOXED = 'boxed'
-}
+/* ---------- ProductType ---------- */
+export const ProductType = {
+  PIECE: 'piece',
+  WEIGHT: 'weight',
+  BOXED: 'boxed',
+} as const;
 
-export enum PaymentMethod {
-  CASH = 'cash',
-  CARD = 'card',
-  TRANSFER = 'transfer',
-  DEBT = 'debt'
-}
+export type ProductType =
+  typeof ProductType[keyof typeof ProductType];
 
-export enum TransactionType {
-  IN = 'in',
-  OUT = 'out'
-}
+/* ---------- PaymentMethod ---------- */
+export const PaymentMethod = {
+  CASH: 'cash',
+  CARD: 'card',
+  TRANSFER: 'transfer',
+  DEBT: 'debt',
+} as const;
 
+export type PaymentMethodType = typeof PaymentMethod[keyof typeof PaymentMethod];
+
+export type PaymentMethod = typeof PaymentMethod[keyof typeof PaymentMethod];
+
+/* ---------- TransactionType ---------- */
+export const TransactionType = {
+  IN: 'in',
+  OUT: 'out',
+} as const;
+
+export type TransactionType =
+  typeof TransactionType[keyof typeof TransactionType];
+
+/* ---------- Interfaces ---------- */
 export interface Product {
   id: string;
   name: string;
-  price: number; // Цена за единицу (за 1 кг или за 1 шт)
+  price: number;
   type: ProductType;
-  stock: number; // Остаток в базовых единицах (кг, шт или коробок)
-  weightPerBox?: number; // Сколько кг в одной коробке (для BOXED)
+  stock: number;
+  weightPerBox?: number;
 }
 
 export interface CartItem extends Product {
-  quantity: number; // Кол-во коробок или кг/шт
+  quantity: number;
 }
 
 export interface Client {
@@ -57,6 +73,12 @@ export interface Sale {
   paymentMethod: PaymentMethod;
   debtBefore?: number;
   debtAfter?: number;
+  splitPayments?: {
+    cash: number;
+    card: number;
+    transfer: number;
+    debt: number;
+  };
 }
 
 export interface CashTransaction {

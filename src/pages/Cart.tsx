@@ -1,12 +1,13 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, User, CreditCard, Banknote, ArrowRightLeft, ShieldAlert, ShoppingCart as CartIcon, DollarSign, Tag, Search, PlusCircle } from 'lucide-react';
+import { User, CreditCard, Banknote, ArrowRightLeft, ShieldAlert, ShoppingCart as CartIcon, Tag, Search, PlusCircle } from 'lucide-react';
 import { useApp } from '../App';
-import { PaymentMethod, Sale, ProductType } from '../services/types';
+import type { Sale } from '../services/types';
+import { PaymentMethod, ProductType } from '../services/types';
 
 const CartPage: React.FC = () => {
-  const { cart, setCart, removeFromCart, clearCart, clients, setClients, setSales, products, setProducts } = useApp();
+  const { cart, setCart, removeFromCart, clearCart, clients, setClients, setSales, setProducts } = useApp();
   const navigate = useNavigate();
   
   const [selectedClientId, setSelectedClientId] = useState('');

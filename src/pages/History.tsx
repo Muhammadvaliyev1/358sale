@@ -1,11 +1,12 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, } from 'react';
 import { Search, Printer, RotateCcw, Edit3, X, Trash2, Plus, Save, Banknote } from 'lucide-react';
 import { useApp } from '../App';
-import { Sale, Product, CartItem, ProductType } from '../services/types';
+import { ProductType } from '../services/types';
+import type { Sale, Product, CartItem } from '../services/types';
 
 const HistoryPage: React.FC = () => {
-  const { sales, setSales, setProducts, setClients, clients, products } = useApp();
+  const { sales, setSales, setProducts, setClients, products } = useApp();
   const [searchTerm, setSearchTerm] = useState('');
   const [clientSearchTerm, setClientSearchTerm] = useState('');
   const [expandedId, setExpandedId] = useState<string | null>(null);

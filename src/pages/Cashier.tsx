@@ -13,7 +13,8 @@ import {
   Calendar
 } from 'lucide-react';
 import { useApp } from '../App';
-import { PaymentMethod, TransactionType, CashTransaction } from '../services/types';
+import { PaymentMethod, TransactionType, } from '../services/types';
+import type { CashTransaction } from '../services/types';
 
 const CashierPage: React.FC = () => {
   const { sales, cash, setCash } = useApp();

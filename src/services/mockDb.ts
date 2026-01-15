@@ -1,5 +1,6 @@
 
-import { Product, Client, Supplier, Sale, CashTransaction, ProductType, ClientPayment, SupplierPayment, SupplierTransaction } from './types';
+import { ProductType } from './types';
+import type { Product, Client, Supplier, Sale, CashTransaction, ClientPayment, SupplierPayment, SupplierTransaction } from './types';
 
 const STORAGE_KEYS = {
   PRODUCTS: 'wp_products',
