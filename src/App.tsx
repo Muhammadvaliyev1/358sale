@@ -14,7 +14,7 @@ import {
   X
 } from 'lucide-react';
 import { firebaseDb } from './services/firebase';
-import type { Product, Client, Supplier, Sale, CashTransaction, CartItem, ClientPayment, SupplierPayment, SupplierTransaction } from './services/types.ts';
+import type { Product, Client, Supplier, Sale, CashTransaction, CartItem, ClientPayment, SupplierPayment, SupplierTransaction } from './services/types';
 
 // Страницы
 import ProductsPage from './pages/Products';
