@@ -13,18 +13,18 @@ import {
   Menu,
   X
 } from 'lucide-react';
-import { firebaseDb } from './services/firebase.ts';
+import { firebaseDb } from './services/firebase';
 import type { Product, Client, Supplier, Sale, CashTransaction, CartItem, ClientPayment, SupplierPayment, SupplierTransaction } from './services/types.ts';
 
 // Страницы
-import ProductsPage from './pages/Products.tsx';
-import CartPage from './pages/Cart.tsx';
-import HistoryPage from './pages/History.tsx';
-import ClientsPage from './pages/Clients.tsx';
-import CashierPage from './pages/Cashier.tsx';
-import InventoryPage from './pages/Inventory.tsx';
-import SuppliersPage from './pages/Suppliers.tsx';
-import ReconciliationPage from './pages/Reconciliation.tsx';
+import ProductsPage from './pages/Products';
+import CartPage from './pages/Cart';
+import HistoryPage from './pages/History';
+import ClientsPage from './pages/Clients';
+import CashierPage from './pages/Cashier';
+import InventoryPage from './pages/Inventory';
+import SuppliersPage from './pages/Suppliers';
+import ReconciliationPage from './pages/Reconciliation';
 
 interface AppContextType {
   products: Product[];
