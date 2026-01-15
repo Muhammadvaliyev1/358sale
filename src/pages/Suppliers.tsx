@@ -2,7 +2,11 @@
 import React, { useState } from 'react';
 import { Phone, Plus, Search, Building2, Edit3, X } from 'lucide-react';
 import { useApp } from '../App';
-import { PaymentMethod, } from '../services/types';
+
+// Runtime-константы
+import { PaymentMethod } from '../services/types';
+
+// Только типы
 import type { Supplier, SupplierTransaction, SupplierPayment } from '../services/types';
 
 const SuppliersPage: React.FC = () => {

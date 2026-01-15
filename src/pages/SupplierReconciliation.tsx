@@ -1,7 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { FileSpreadsheet, Truck, ArrowRightLeft, Banknote, CreditCard, ShieldAlert } from 'lucide-react';
 import { useApp } from '../App';
+
+// Импортируем **константу** PaymentMethod для использования на рантайме
 import { PaymentMethod } from '../services/types';
+
+// Импортируем **только типы**, которые нужны TypeScript и исчезают после компиляции
 import type { PaymentMethodType, SupplierPayment } from '../services/types';
 
 const SupplierReconciliationPage: React.FC = () => {
@@ -161,27 +165,27 @@ const SupplierReconciliationPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-  {transactions.map(t => (
-    <tr key={t.id} className="hover:bg-slate-50 transition-colors">
-      <td className="px-6 py-4 text-xs text-slate-500">{new Date(t.date).toLocaleString()}</td>
-      <td className="px-6 py-4 font-semibold text-slate-800 text-sm">
-        {t.type === 'payment' && 'method' in t ? (
-          <>
-            {getMethodIcon(t.method)} {t.description}
-          </>
-        ) : (
-          t.description
-        )}
-      </td>
-      <td className="px-6 py-4 text-right font-bold text-rose-600 text-sm">
-        {t.type === 'supply' ? formatPrice(t.amount) : ''}
-      </td>
-      <td className="px-6 py-4 text-right font-bold text-emerald-600 text-sm">
-        {t.type === 'payment' ? formatPrice(t.amount) : ''}
-      </td>
-    </tr>
-  ))}
-</tbody>
+                  {transactions.map(t => (
+                    <tr key={t.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 text-xs text-slate-500">{new Date(t.date).toLocaleString()}</td>
+                      <td className="px-6 py-4 font-semibold text-slate-800 text-sm">
+                        {t.type === 'payment' && 'method' in t ? (
+                          <>
+                            {getMethodIcon(t.method)} {t.description}
+                          </>
+                        ) : (
+                          t.description
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-right font-bold text-rose-600 text-sm">
+                        {t.type === 'supply' ? formatPrice(t.amount) : ''}
+                      </td>
+                      <td className="px-6 py-4 text-right font-bold text-emerald-600 text-sm">
+                        {t.type === 'payment' ? formatPrice(t.amount) : ''}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
               </table>
             </div>
           </div>

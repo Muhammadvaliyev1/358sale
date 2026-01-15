@@ -2,8 +2,12 @@
 import React, { useState } from 'react';
 import { Search, Plus, Box } from 'lucide-react';
 import { useApp } from '../App';
-import type { Product } from '../services/types';
+
+// Runtime-константы
 import { ProductType } from '../services/types';
+
+// Только типы
+import type { Product } from '../services/types';
 
 const ProductsPage: React.FC = () => {
   const { products, addToCart } = useApp();

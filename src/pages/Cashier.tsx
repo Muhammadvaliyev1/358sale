@@ -1,19 +1,12 @@
 
 import React, { useState, useMemo } from 'react';
-import { 
-  Wallet, 
-  TrendingUp, 
-  TrendingDown, 
-  Plus, 
-  Minus, 
-  CreditCard, 
-  Banknote, 
-  ArrowRightLeft,
-  ShieldAlert,
-  Calendar
-} from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, Plus, Minus, CreditCard, Banknote, ArrowRightLeft, ShieldAlert, Calendar } from 'lucide-react';
 import { useApp } from '../App';
-import { PaymentMethod, TransactionType, } from '../services/types';
+
+// Runtime-константы
+import { PaymentMethod, TransactionType } from '../services/types';
+
+// Только типы
 import type { CashTransaction } from '../services/types';
 
 const CashierPage: React.FC = () => {

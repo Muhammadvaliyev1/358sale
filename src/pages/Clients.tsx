@@ -2,7 +2,11 @@
 import React, { useState } from 'react';
 import { Search, Plus, Phone, DollarSign, UserCircle, Edit3, X } from 'lucide-react';
 import { useApp } from '../App';
+
+// Только типы
 import type { Client } from '../services/types';
+
+// Runtime-константы (если будут нужны, можно добавить)
 
 const ClientsPage: React.FC = () => {
   const { clients, setClients, setSales } = useApp();

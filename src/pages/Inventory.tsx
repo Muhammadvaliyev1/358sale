@@ -1,8 +1,12 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Truck, Plus, Package, RefreshCw, Trash2, Search, Edit3, X } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Plus, Edit3, X } from 'lucide-react';
 import { useApp } from '../App';
-import { ProductType, } from '../services/types';
+
+// Константы для рантайма
+import { ProductType } from '../services/types';
+
+// Только типы
 import type { Product } from '../services/types';
 
 const InventoryPage: React.FC = () => {

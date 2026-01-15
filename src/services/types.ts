@@ -8,8 +8,7 @@ export const ProductType = {
   BOXED: 'boxed',
 } as const;
 
-export type ProductType =
-  typeof ProductType[keyof typeof ProductType];
+export type ProductType = typeof ProductType[keyof typeof ProductType];
 
 /* ---------- PaymentMethod ---------- */
 export const PaymentMethod = {
@@ -29,8 +28,7 @@ export const TransactionType = {
   OUT: 'out',
 } as const;
 
-export type TransactionType =
-  typeof TransactionType[keyof typeof TransactionType];
+export type TransactionType = typeof TransactionType[keyof typeof TransactionType];
 
 /* ---------- Interfaces ---------- */
 export interface Product {

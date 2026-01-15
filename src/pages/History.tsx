@@ -1,8 +1,12 @@
 
-import React, { useState, } from 'react';
+import React, { useState } from 'react';
 import { Search, Printer, RotateCcw, Edit3, X, Trash2, Plus, Save, Banknote } from 'lucide-react';
 import { useApp } from '../App';
+
+// Runtime-константы
 import { ProductType } from '../services/types';
+
+// Только типы
 import type { Sale, Product, CartItem } from '../services/types';
 
 const HistoryPage: React.FC = () => {

@@ -3,8 +3,12 @@ import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, CreditCard, Banknote, ArrowRightLeft, ShieldAlert, ShoppingCart as CartIcon, Tag, Search, PlusCircle } from 'lucide-react';
 import { useApp } from '../App';
-import type { Sale } from '../services/types';
+
+// Runtime-константы
 import { PaymentMethod, ProductType } from '../services/types';
+
+// Типы
+import type { Sale } from '../services/types';
 
 const CartPage: React.FC = () => {
   const { cart, setCart, removeFromCart, clearCart, clients, setClients, setSales, setProducts } = useApp();

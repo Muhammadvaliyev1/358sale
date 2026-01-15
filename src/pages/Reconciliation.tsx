@@ -1,7 +1,14 @@
 
 import React, { useState, useMemo } from 'react';
-import { FileText, TrendingUp, TrendingDown, ArrowRightLeft, Banknote, CreditCard, ShieldAlert, Users, UsersRound, Calendar, Search } from 'lucide-react';
+import { 
+  FileText, TrendingUp, TrendingDown, ArrowRightLeft, 
+  Banknote, CreditCard, ShieldAlert, Users, UsersRound, 
+  Calendar, Search 
+} from 'lucide-react';
+
 import { useApp } from '../App';
+
+// Константы, которые реально используются в коде
 import { PaymentMethod } from '../services/types';
 
 const ReconciliationPage: React.FC = () => {
