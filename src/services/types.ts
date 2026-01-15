@@ -1,5 +1,5 @@
 export const typesLoaded = true;
-console.log('types.ts loaded');
+console.log('types loaded');
 
 /* ---------- ProductType ---------- */
 export const ProductType = {
