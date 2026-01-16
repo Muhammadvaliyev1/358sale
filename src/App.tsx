@@ -73,16 +73,99 @@ const App: React.FC = () => {
 
   // Реальное время: подписка на Firebase
   useEffect(() => {
-    const unsubProducts = firebaseDb.subscribe('products', setProductsState);
-    const unsubClients = firebaseDb.subscribe('clients', setClientsState);
-    const unsubSuppliers = firebaseDb.subscribe('suppliers', setSuppliersState);
-    const unsubSales = firebaseDb.subscribe('sales', (data) => {
-       setSalesState(data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    const unsubProducts = firebaseDb.subscribe<Product>('products', (docs) => {
+      const formatted: Product[] = docs.map(doc => ({
+        id: doc.id,
+        name: doc.name ?? '',
+        price: doc.price ?? 0,
+        type: doc.type ?? '',
+        stock: doc.stock ?? 0
+      }));
+      setProductsState(formatted);
     });
-    const unsubCash = firebaseDb.subscribe('cash', setCashState);
-    const unsubPayments = firebaseDb.subscribe('payments', setPaymentsState);
-    const unsubSuppPayments = firebaseDb.subscribe('supplierPayments', setSupplierPaymentsState);
-    const unsubSuppTxs = firebaseDb.subscribe('supplierTransactions', setSupplierTransactionsState);
+
+    const unsubClients = firebaseDb.subscribe<Client>('clients', (docs) => {
+      const formatted: Client[] = docs.map(doc => ({
+        id: doc.id,
+        name: doc.name ?? '',
+        phone: doc.phone ?? '',
+        debt: doc.debt ?? 0
+      }));
+      setClientsState(formatted);
+    });
+
+    const unsubSuppliers = firebaseDb.subscribe<Supplier>('suppliers', (docs) => {
+      const formatted: Supplier[] = docs.map(doc => ({
+        id: doc.id,
+        name: doc.name ?? '',
+        phone: doc.phone ?? '',
+        category: doc.category ?? '',
+        balance: doc.balance ?? 0
+      }));
+      setSuppliersState(formatted);
+    });
+
+    const unsubSales = firebaseDb.subscribe<Sale>('sales', (docs) => {
+      const formatted: Sale[] = docs.map(doc => ({
+        id: doc.id,
+        date: doc.date ?? new Date().toISOString(),
+        clientId: doc.clientId ?? '',
+        clientName: doc.clientName ?? '',
+        items: doc.items ?? [],
+        total: doc.total ?? 0,
+        paymentMethod: doc.paymentMethod ?? 'cash',
+        discount: doc.discount ?? 0,
+        amountPaid: doc.amountPaid ?? 0
+      }));
+      setSalesState(formatted.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+    });
+
+    const unsubCash = firebaseDb.subscribe<CashTransaction>('cash', (docs) => {
+      const formatted: CashTransaction[] = docs.map(doc => ({
+        id: doc.id,
+        date: doc.date ?? new Date().toISOString(),
+        amount: doc.amount ?? 0,
+        type: doc.type ?? 'income',
+        reason: doc.reason ?? ''
+      }));
+      setCashState(formatted);
+    });
+
+    const unsubPayments = firebaseDb.subscribe<ClientPayment>('payments', (docs) => {
+      const formatted: ClientPayment[] = docs.map(doc => ({
+        id: doc.id,
+        date: doc.date ?? new Date().toISOString(),
+        clientId: doc.clientId ?? '',
+        amount: doc.amount ?? 0,
+        method: doc.method ?? 'cash',
+        note: doc.note ?? ''
+      }));
+      setPaymentsState(formatted);
+    });
+
+    const unsubSuppPayments = firebaseDb.subscribe<SupplierPayment>('supplierPayments', (docs) => {
+      const formatted: SupplierPayment[] = docs.map(doc => ({
+        id: doc.id,
+        date: doc.date ?? new Date().toISOString(),
+        supplierId: doc.supplierId ?? '',
+        amount: doc.amount ?? 0,
+        method: doc.method ?? 'cash',
+        note: doc.note ?? ''
+      }));
+      setSupplierPaymentsState(formatted);
+    });
+
+    const unsubSuppTxs = firebaseDb.subscribe<SupplierTransaction>('supplierTransactions', (docs) => {
+      const formatted: SupplierTransaction[] = docs.map(doc => ({
+        id: doc.id,
+        date: doc.date ?? new Date().toISOString(),
+        supplierId: doc.supplierId ?? '',
+        amount: doc.amount ?? 0,
+        type: doc.type ?? 'expense',
+        description: doc.description ?? ''
+      }));
+      setSupplierTransactionsState(formatted);
+    });
 
     return () => {
       unsubProducts();
@@ -96,6 +179,7 @@ const App: React.FC = () => {
     };
   }, []);
 
+  // Методы для обновления данных
   const setProducts = (data: Product[] | ((prev: Product[]) => Product[])) => {
     const newData = typeof data === 'function' ? data(products) : data;
     newData.forEach(p => firebaseDb.save('products', p.id, p));

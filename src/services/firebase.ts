@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, onSnapshot, QuerySnapshot, DocumentData, QueryDocumentSnapshot, FirestoreError, setDoc, doc, deleteDoc} from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, setDoc, doc, deleteDoc, QuerySnapshot, DocumentData, FirestoreError } from "firebase/firestore";
 
+// Твоя конфигурация Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBVlamAzx_irw6gRPapHzt88c17-VHa-uM",
   authDomain: "shop-c5488.firebaseapp.com",
@@ -12,42 +13,37 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+export const db = getFirestore(app);
 
+// Универсальный объект для работы с коллекциями
 export const firebaseDb = {
-  subscribe: (collectionName: string, callback: (data: any[]) => void) => {
+  subscribe: <T extends object>(collectionName: string, callback: (data: (T & { id: string })[]) => void) => {
     const colRef = collection(db, collectionName);
-    return onSnapshot(colRef, (snapshot) => {
-      const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      callback(docs);
-    });
+    return onSnapshot(
+      colRef,
+      (snapshot: QuerySnapshot<DocumentData>) => {
+        const data = snapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as T) }));
+        callback(data);
+      },
+      (error: FirestoreError) => {
+        console.error(`Ошибка подписки на ${collectionName}:`, error);
+      }
+    );
   },
 
-  save: async (collectionName: string, id: string, data: any) => {
-    await setDoc(doc(db, collectionName, id), data, { merge: true });
+  save: async <T extends object>(collectionName: string, id: string, data: T) => {
+    try {
+      await setDoc(doc(db, collectionName, id), data, { merge: true });
+    } catch (e) {
+      console.error("Ошибка при сохранении в Firestore:", e);
+    }
   },
 
   delete: async (collectionName: string, id: string) => {
-    await deleteDoc(doc(db, collectionName, id));
+    try {
+      await deleteDoc(doc(db, collectionName, id));
+    } catch (e) {
+      console.error("Ошибка при удалении из Firestore:", e);
+    }
   }
 };
-
-export function subscribeToCollection(
-  path: string,
-  cb: (docs: Array<{ id: string; data: DocumentData }>) => void
-) {
-  const colRef = collection(db, path);
-  return onSnapshot(
-    colRef,
-    (snapshot: QuerySnapshot<DocumentData>) => {
-      const docs = snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => ({
-        id: doc.id,
-        data: doc.data(),
-      }));
-      cb(docs);
-    },
-    (error: FirestoreError) => {
-      console.error("Firestore onSnapshot error:", error);
-    }
-  );
-}
