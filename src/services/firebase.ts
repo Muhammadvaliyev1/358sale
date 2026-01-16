@@ -1,20 +1,14 @@
 import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  collection,
-  onSnapshot,
-  QuerySnapshot,
-  DocumentData,
-  QueryDocumentSnapshot,
-  FirestoreError,
-} from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, QuerySnapshot, DocumentData, QueryDocumentSnapshot, FirestoreError,} from "firebase/firestore";
 
 const firebaseConfig = {
-  // Поместите сюда ваши значения (или читайте из env)
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  // ...
+  apiKey: "AIzaSyBVlamAzx_irw6gRPapHzt88c17-VHa-uM",
+  authDomain: "shop-c5488.firebaseapp.com",
+  projectId: "shop-c5488",
+  storageBucket: "shop-c5488.firebasestorage.app",
+  messagingSenderId: "199296594637",
+  appId: "1:199296594637:web:f6b8071bd9ed245605ef84",
+  measurementId: "G-1XT2HXS61B"
 };
 
 const app = initializeApp(firebaseConfig);
