@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, onSnapshot, QuerySnapshot, DocumentData, QueryDocumentSnapshot, FirestoreError,} from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, QuerySnapshot, DocumentData, QueryDocumentSnapshot, FirestoreError, setDoc, doc, deleteDoc} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBVlamAzx_irw6gRPapHzt88c17-VHa-uM",
@@ -13,6 +13,24 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+export const firebaseDb = {
+  subscribe: (collectionName: string, callback: (data: any[]) => void) => {
+    const colRef = collection(db, collectionName);
+    return onSnapshot(colRef, (snapshot) => {
+      const docs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      callback(docs);
+    });
+  },
+
+  save: async (collectionName: string, id: string, data: any) => {
+    await setDoc(doc(db, collectionName, id), data, { merge: true });
+  },
+
+  delete: async (collectionName: string, id: string) => {
+    await deleteDoc(doc(db, collectionName, id));
+  }
+};
 
 export function subscribeToCollection(
   path: string,
