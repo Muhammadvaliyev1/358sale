@@ -1,17 +1,8 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { 
-  Package, 
-  ShoppingCart, 
-  History, 
-  Users, 
-  Wallet, 
-  Truck, 
-  UsersRound, 
-  LayoutDashboard,
-  FileText,
-  Menu,
-  X
+  Package, ShoppingCart, History, Users, Wallet, Truck, UsersRound, LayoutDashboard,
+  FileText, Menu, X
 } from 'lucide-react';
 import { firebaseDb } from './services/firebase';
 import type { Product, Client, Supplier, Sale, CashTransaction, CartItem, ClientPayment, SupplierPayment, SupplierTransaction } from './services/types';
@@ -51,7 +42,6 @@ interface AppContextType {
 }
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
-
 export const useApp = () => {
   const context = useContext(AppContext);
   if (!context) throw new Error("useApp must be used within AppProvider");
@@ -71,7 +61,6 @@ const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
 
-  // Реальное время: подписка на Firebase
   useEffect(() => {
     const unsubProducts = firebaseDb.subscribe<Product>('products', (docs) => {
       const formatted: Product[] = docs.map(doc => ({
@@ -79,103 +68,23 @@ const App: React.FC = () => {
         name: doc.name ?? '',
         price: doc.price ?? 0,
         type: doc.type ?? '',
-        stock: doc.stock ?? 0
+        stock: doc.stock ?? 0,
+        weight: doc.weight ?? 0 // вот эта строка!
       }));
       setProductsState(formatted);
     });
 
-    const unsubClients = firebaseDb.subscribe<Client>('clients', (docs) => {
-      const formatted: Client[] = docs.map(doc => ({
-        id: doc.id,
-        name: doc.name ?? '',
-        phone: doc.phone ?? '',
-        debt: doc.debt ?? 0
-      }));
-      setClientsState(formatted);
-    });
-
-    const unsubSuppliers = firebaseDb.subscribe<Supplier>('suppliers', (docs) => {
-      const formatted: Supplier[] = docs.map(doc => ({
-        id: doc.id,
-        name: doc.name ?? '',
-        phone: doc.phone ?? '',
-        category: doc.category ?? '',
-        balance: doc.balance ?? 0
-      }));
-      setSuppliersState(formatted);
-    });
-
-    const unsubSales = firebaseDb.subscribe<Sale>('sales', (docs) => {
-      const formatted: Sale[] = docs.map(doc => ({
-        id: doc.id,
-        date: doc.date ?? new Date().toISOString(),
-        clientId: doc.clientId ?? '',
-        clientName: doc.clientName ?? '',
-        items: doc.items ?? [],
-        total: doc.total ?? 0,
-        paymentMethod: doc.paymentMethod ?? 'cash',
-        discount: doc.discount ?? 0,
-        amountPaid: doc.amountPaid ?? 0
-      }));
-      setSalesState(formatted.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-    });
-
-    const unsubCash = firebaseDb.subscribe<CashTransaction>('cash', (docs) => {
-      const formatted: CashTransaction[] = docs.map(doc => ({
-        id: doc.id,
-        date: doc.date ?? new Date().toISOString(),
-        amount: doc.amount ?? 0,
-        type: doc.type ?? 'income',
-        reason: doc.reason ?? ''
-      }));
-      setCashState(formatted);
-    });
-
-    const unsubPayments = firebaseDb.subscribe<ClientPayment>('payments', (docs) => {
-      const formatted: ClientPayment[] = docs.map(doc => ({
-        id: doc.id,
-        date: doc.date ?? new Date().toISOString(),
-        clientId: doc.clientId ?? '',
-        amount: doc.amount ?? 0,
-        method: doc.method ?? 'cash',
-        note: doc.note ?? ''
-      }));
-      setPaymentsState(formatted);
-    });
-
-    const unsubSuppPayments = firebaseDb.subscribe<SupplierPayment>('supplierPayments', (docs) => {
-      const formatted: SupplierPayment[] = docs.map(doc => ({
-        id: doc.id,
-        date: doc.date ?? new Date().toISOString(),
-        supplierId: doc.supplierId ?? '',
-        amount: doc.amount ?? 0,
-        method: doc.method ?? 'cash',
-        note: doc.note ?? ''
-      }));
-      setSupplierPaymentsState(formatted);
-    });
-
-    const unsubSuppTxs = firebaseDb.subscribe<SupplierTransaction>('supplierTransactions', (docs) => {
-      const formatted: SupplierTransaction[] = docs.map(doc => ({
-        id: doc.id,
-        date: doc.date ?? new Date().toISOString(),
-        supplierId: doc.supplierId ?? '',
-        amount: doc.amount ?? 0,
-        type: doc.type ?? 'expense',
-        description: doc.description ?? ''
-      }));
-      setSupplierTransactionsState(formatted);
-    });
+    const unsubClients = firebaseDb.subscribe<Client>('clients', (docs) => setClientsState(docs));
+    const unsubSuppliers = firebaseDb.subscribe<Supplier>('suppliers', (docs) => setSuppliersState(docs));
+    const unsubSales = firebaseDb.subscribe<Sale>('sales', (docs) => setSalesState(docs));
+    const unsubCash = firebaseDb.subscribe<CashTransaction>('cash', (docs) => setCashState(docs));
+    const unsubPayments = firebaseDb.subscribe<ClientPayment>('payments', (docs) => setPaymentsState(docs));
+    const unsubSuppPayments = firebaseDb.subscribe<SupplierPayment>('supplierPayments', (docs) => setSupplierPaymentsState(docs));
+    const unsubSuppTxs = firebaseDb.subscribe<SupplierTransaction>('supplierTransactions', (docs) => setSupplierTransactionsState(docs));
 
     return () => {
-      unsubProducts();
-      unsubClients();
-      unsubSuppliers();
-      unsubSales();
-      unsubCash();
-      unsubPayments();
-      unsubSuppPayments();
-      unsubSuppTxs();
+      unsubProducts(); unsubClients(); unsubSuppliers(); unsubSales();
+      unsubCash(); unsubPayments(); unsubSuppPayments(); unsubSuppTxs();
     };
   }, []);
 
@@ -184,59 +93,22 @@ const App: React.FC = () => {
     const newData = typeof data === 'function' ? data(products) : data;
     newData.forEach(p => firebaseDb.save('products', p.id, p));
   };
-
-  const setClients = (data: Client[] | ((prev: Client[]) => Client[])) => {
-    const newData = typeof data === 'function' ? data(clients) : data;
-    newData.forEach(c => firebaseDb.save('clients', c.id, c));
-  };
-
-  const setSuppliers = (data: Supplier[] | ((prev: Supplier[]) => Supplier[])) => {
-    const newData = typeof data === 'function' ? data(suppliers) : data;
-    newData.forEach(s => firebaseDb.save('suppliers', s.id, s));
-  };
-
-  const setSales = (data: Sale[] | ((prev: Sale[]) => Sale[])) => {
-    const newData = typeof data === 'function' ? data(sales) : data;
-    newData.forEach(s => firebaseDb.save('sales', s.id, s));
-  };
-
-  const setCash = (data: CashTransaction[] | ((prev: CashTransaction[]) => CashTransaction[])) => {
-    const newData = typeof data === 'function' ? data(cash) : data;
-    newData.forEach(tx => firebaseDb.save('cash', tx.id, tx));
-  };
-
-  const setPayments = (data: ClientPayment[] | ((prev: ClientPayment[]) => ClientPayment[])) => {
-    const newData = typeof data === 'function' ? data(payments) : data;
-    newData.forEach(p => firebaseDb.save('payments', p.id, p));
-  };
-
-  const setSupplierPayments = (data: SupplierPayment[] | ((prev: SupplierPayment[]) => SupplierPayment[])) => {
-    const newData = typeof data === 'function' ? data(supplierPayments) : data;
-    newData.forEach(p => firebaseDb.save('supplierPayments', p.id, p));
-  };
-
-  const setSupplierTransactions = (data: SupplierTransaction[] | ((prev: SupplierTransaction[]) => SupplierTransaction[])) => {
-    const newData = typeof data === 'function' ? data(supplierTransactions) : data;
-    newData.forEach(t => firebaseDb.save('supplierTransactions', t.id, t));
-  };
+  const setClients = (data: Client[] | ((prev: Client[]) => Client[])) => { const newData = typeof data === 'function' ? data(clients) : data; newData.forEach(c => firebaseDb.save('clients', c.id, c)); };
+  const setSuppliers = (data: Supplier[] | ((prev: Supplier[]) => Supplier[])) => { const newData = typeof data === 'function' ? data(suppliers) : data; newData.forEach(s => firebaseDb.save('suppliers', s.id, s)); };
+  const setSales = (data: Sale[] | ((prev: Sale[]) => Sale[])) => { const newData = typeof data === 'function' ? data(sales) : data; newData.forEach(s => firebaseDb.save('sales', s.id, s)); };
+  const setCash = (data: CashTransaction[] | ((prev: CashTransaction[]) => CashTransaction[])) => { const newData = typeof data === 'function' ? data(cash) : data; newData.forEach(tx => firebaseDb.save('cash', tx.id, tx)); };
+  const setPayments = (data: ClientPayment[] | ((prev: ClientPayment[]) => ClientPayment[])) => { const newData = typeof data === 'function' ? data(payments) : data; newData.forEach(p => firebaseDb.save('payments', p.id, p)); };
+  const setSupplierPayments = (data: SupplierPayment[] | ((prev: SupplierPayment[]) => SupplierPayment[])) => { const newData = typeof data === 'function' ? data(supplierPayments) : data; newData.forEach(p => firebaseDb.save('supplierPayments', p.id, p)); };
+  const setSupplierTransactions = (data: SupplierTransaction[] | ((prev: SupplierTransaction[]) => SupplierTransaction[])) => { const newData = typeof data === 'function' ? data(supplierTransactions) : data; newData.forEach(t => firebaseDb.save('supplierTransactions', t.id, t)); };
 
   const addToCart = (product: Product, quantity: number) => {
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id);
-      if (existing) {
-        return prev.map(item => item.id === product.id 
-          ? { ...item, quantity: item.quantity + quantity } 
-          : item
-        );
-      }
+      if (existing) return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item);
       return [...prev, { ...product, quantity }];
     });
   };
-
-  const removeFromCart = (productId: string) => {
-    setCart(prev => prev.filter(item => item.id !== productId));
-  };
-
+  const removeFromCart = (productId: string) => setCart(prev => prev.filter(item => item.id !== productId));
   const clearCart = () => setCart([]);
 
   const navItems = [
@@ -251,17 +123,11 @@ const App: React.FC = () => {
   ];
 
   return (
-    <AppContext.Provider value={{ 
-      products, setProducts, 
-      clients, setClients, 
-      suppliers, setSuppliers, 
-      sales, setSales, 
-      cash, setCash,
-      payments, setPayments,
-      supplierPayments, setSupplierPayments,
-      supplierTransactions, setSupplierTransactions,
-      cart, setCart,
-      addToCart, removeFromCart, clearCart
+    <AppContext.Provider value={{
+      products, setProducts, clients, setClients, suppliers, setSuppliers,
+      sales, setSales, cash, setCash, payments, setPayments,
+      supplierPayments, setSupplierPayments, supplierTransactions, setSupplierTransactions,
+      cart, setCart, addToCart, removeFromCart, clearCart
     }}>
       <div className="flex min-h-screen bg-slate-50">
         <div className="lg:hidden fixed top-4 left-4 z-50">
@@ -279,8 +145,9 @@ const App: React.FC = () => {
               <h1 className="text-xl font-bold text-slate-800 tracking-tight uppercase">358 PRO</h1>
             </div>
             <nav className="flex-1 space-y-1">
-              {navItems.map((item) => (
-                <Link key={item.path} to={item.path} onClick={() => setIsSidebarOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${location.pathname === item.path ? 'bg-indigo-50 text-indigo-600 font-bold' : 'text-slate-500 hover:bg-slate-50'}`}>
+              {navItems.map(item => (
+                <Link key={item.path} to={item.path} onClick={() => setIsSidebarOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${location.pathname === item.path ? 'bg-indigo-50 text-indigo-600 font-bold' : 'text-slate-500 hover:bg-slate-50'}`}>
                   <item.icon size={20} />
                   <span className="flex-1 text-sm font-bold uppercase tracking-tight">{item.name}</span>
                   {item.badge && item.badge > 0 && <span className="bg-indigo-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full">{item.badge}</span>}

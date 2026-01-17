@@ -30,7 +30,7 @@ const HistoryPage: React.FC = () => {
 
     const itemsHtml = sale.items.map(item => {
       const isBoxed = item.type === ProductType.BOXED;
-      const weight = item.weightPerBox || 1;
+      const weight = item.weight || 1;
       const lineTotal = isBoxed ? (item.quantity * weight * item.price) : (item.quantity * item.price);
       const formula = isBoxed ? `${item.quantity} * ${weight} * ${item.price}` : `${item.quantity} * ${item.price}`;
       return `
@@ -54,8 +54,8 @@ const HistoryPage: React.FC = () => {
         <body onload="window.print(); window.close();">
           <div style="text-align: center;">
             <h1 style="margin:0; font-size: 64px; font-weight: 900; color: #000;">358</h1>
-            <div style="font-size: 16px; font-weight: 900; margin-top: 5px; color: #000;">
-              +998906226000 | +998916026000<br/>+998900093199 | +998901193199
+            <div style="font-size: 20px; font-weight: 900; margin-top: 5px; color: #000;">
+              +998906226000<br/>+998916026000<br/>+998901193199<br/>+998909126770<br/>
             </div>
           </div>
           <div class="hr"></div>
@@ -95,7 +95,7 @@ const HistoryPage: React.FC = () => {
     if (!originalSale) return;
 
     const newTotal = editingSale.items.reduce((sum, item) => {
-      const weight = item.weightPerBox || 1;
+      const weight = item.weight || 1;
       return sum + (item.type === ProductType.BOXED ? item.quantity * weight * item.price : item.quantity * item.price);
     }, 0) - (editingSale.discount || 0);
     
@@ -203,8 +203,8 @@ const HistoryPage: React.FC = () => {
                               <div key={i} className="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
                                 <span className="font-black text-black uppercase text-sm">{item.name}</span>
                                 <span className="font-black text-black text-lg">
-                                  {item.type === ProductType.BOXED ? `${item.quantity}*${item.weightPerBox}*${formatPrice(item.price)}` : `${item.quantity}*${formatPrice(item.price)}`}
-                                  <span className="ml-2 text-indigo-600">= {formatPrice(item.type === ProductType.BOXED ? item.quantity * (item.weightPerBox || 1) * item.price : item.quantity * item.price)}</span>
+                                  {item.type === ProductType.BOXED ? `${item.quantity}*${item.weight}*${formatPrice(item.price)}` : `${item.quantity}*${formatPrice(item.price)}`}
+                                  <span className="ml-2 text-indigo-600">= {formatPrice(item.type === ProductType.BOXED ? item.quantity * (item.weight || 1) * item.price : item.quantity * item.price)}</span>
                                 </span>
                               </div>
                             ))}
@@ -325,13 +325,13 @@ const HistoryPage: React.FC = () => {
                 <p className="text-[10px] font-black text-black uppercase tracking-widest">Пересчитанный итог</p>
                 <p className="text-4xl font-black text-black">
                   {formatPrice(editingSale.items.reduce((sum, i) => {
-                    const weight = i.weightPerBox || 1;
+                    const weight = i.weight || 1;
                     return sum + (i.type === ProductType.BOXED ? i.quantity * weight * i.price : i.quantity * i.price);
                   }, 0) - (editingSale.discount || 0))} <span className="text-xl">сум</span>
                 </p>
                 <p className="text-xs font-bold text-rose-600">
                    Остаток в долг: {formatPrice(Math.max(0, editingSale.items.reduce((sum, i) => {
-                    const weight = i.weightPerBox || 1;
+                    const weight = i.weight || 1;
                     return sum + (i.type === ProductType.BOXED ? i.quantity * weight * i.price : i.quantity * i.price);
                   }, 0) - (editingSale.discount || 0) - editingSale.amountPaid))}
                 </p>

@@ -17,7 +17,7 @@ const initialProducts: Product[] = [
   { id: '1', name: 'Яблоки (Гала)', price: 15000, type: ProductType.WEIGHT, stock: 500 },
   { id: '2', name: 'Картофель (Крупный)', price: 4500, type: ProductType.WEIGHT, stock: 1200 },
   { id: '3', name: 'Молоко 1л', price: 9500, type: ProductType.PIECE, stock: 240 },
-  { id: 'tuya_default', name: 'Туя', price: 20000, type: ProductType.BOXED, weightPerBox: 4, stock: 10 },
+  { id: 'tuya_default', name: 'Туя', price: 20000, type: ProductType.BOXED, weight: 4, stock: 10 },
 ];
 
 const initialClients: Client[] = [

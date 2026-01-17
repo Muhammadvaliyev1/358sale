@@ -26,7 +26,7 @@ const CartPage: React.FC = () => {
 
   const calculateItemTotal = (item: any) => {
     if (item.type === ProductType.BOXED) {
-      return item.quantity * (item.weightPerBox || 1) * item.price;
+      return item.quantity * (item.weight || 1) * item.price;
     }
     return item.quantity * item.price;
   };

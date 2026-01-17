@@ -37,7 +37,7 @@ export interface Product {
   price: number;
   type: ProductType;
   stock: number;
-  weightPerBox?: number;
+  weight?: number;
 }
 
 export interface CartItem extends Product {

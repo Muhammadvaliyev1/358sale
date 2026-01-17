@@ -4,6 +4,7 @@ import { Truck, Plus, Package, RefreshCw, Trash2, Search, Edit3, X } from 'lucid
 import { useApp } from '../App';
 import { ProductType, } from '../services/types';
 import type { Product } from '../services/types';
+import { firebaseDb } from '../services/firebase';
 
 const InventoryPage: React.FC = () => {
   const { products, setProducts, setCart } = useApp();
@@ -12,7 +13,7 @@ const InventoryPage: React.FC = () => {
   const [restockSearch, setRestockSearch] = useState('');
   
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [newProd, setNewProd] = useState<{ name: string; price: string; type: ProductType; weightPerBox: string }>({ name: '', price: '', type: ProductType.PIECE, weightPerBox: '' });
+  const [newProd, setNewProd] = useState<{ name: string; price: string; type: ProductType; weight: string }>({ name: '', price: '', type: ProductType.PIECE, weight: '' });
   const [restock, setRestock] = useState({ productId: '', amount: '', costPrice: '' });
 
   useEffect(() => {
@@ -24,22 +25,26 @@ const InventoryPage: React.FC = () => {
     }
   }, [restock.productId, products]);
 
-  const handleCreateNew = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleCreateNew = async (e: React.FormEvent) => {
+  e.preventDefault();
     if (!newProd.name || !newProd.price) return;
-    
+
     const product: Product = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: crypto.randomUUID(),
       name: newProd.name,
       price: parseFloat(newProd.price),
       type: newProd.type,
       stock: 0,
-      weightPerBox: newProd.type === ProductType.BOXED ? parseFloat(newProd.weightPerBox) || 1 : undefined
+      ...(newProd.type === ProductType.BOXED && {
+        weight: parseFloat(newProd.weight)
+      })
     };
-    
-    
+
+    await firebaseDb.save('products', product.id, product); // 🔥 ВАЖНО
+
     setProducts(prev => [product, ...prev]);
-    setNewProd({ name: '', price: '', type: ProductType.PIECE, weightPerBox: '' });
+
+    setNewProd({ name: '', price: '', type: ProductType.PIECE, weight: '' });
     setActiveTab('manage');
   };
 
@@ -145,7 +150,7 @@ const InventoryPage: React.FC = () => {
               {newProd.type === ProductType.BOXED && (
                 <div className="md:col-span-2 space-y-2 animate-in fade-in slide-in-from-top-2">
                   <label className="text-xs font-black text-indigo-600 uppercase ml-1">Вес одной коробки (кг)</label>
-                  <input required type="number" step="0.01" value={newProd.weightPerBox} onChange={(e) => setNewProd({ ...newProd, weightPerBox: e.target.value })} className="w-full px-6 py-4 bg-indigo-50 border-2 border-indigo-200 rounded-2xl font-black text-xl text-indigo-700 outline-none focus:border-indigo-600" placeholder="Напр: 25.5" />
+                  <input required type="number" step="0.01" value={newProd.weight} onChange={(e) => setNewProd({ ...newProd, weight: e.target.value })} className="w-full px-6 py-4 bg-indigo-50 border-2 border-indigo-200 rounded-2xl font-black text-xl text-indigo-700 outline-none focus:border-indigo-600" placeholder="Напр: 25.5" />
                 </div>
               )}
             </div>
@@ -177,7 +182,7 @@ const InventoryPage: React.FC = () => {
                     <tr key={p.id} className="hover:bg-slate-50 transition-colors">
                       <td className="p-6">
                         <p className="font-black text-slate-900 text-sm uppercase">{p.name}</p>
-                        {p.type === ProductType.BOXED && <p className="text-[10px] font-bold text-indigo-500 uppercase">Вес коробки: {p.weightPerBox} кг</p>}
+                        {p.type === ProductType.BOXED && <p className="text-[10px] font-bold text-indigo-500 uppercase">Вес коробки: {p.weight} кг</p>}
                       </td>
                       <td className={`p-6 text-right font-black ${p.stock <= 5 ? 'text-rose-600' : 'text-slate-800'}`}>
                         {p.stock} {p.type === ProductType.WEIGHT ? 'кг' : p.type === ProductType.BOXED ? 'кор' : 'шт'}
@@ -223,7 +228,7 @@ const InventoryPage: React.FC = () => {
                 {editingProduct.type === ProductType.BOXED && (
                    <div className="space-y-2">
                     <label className="text-xs font-black text-indigo-600 uppercase">Вес одной коробки (кг)</label>
-                    <input required type="number" step="0.01" value={editingProduct.weightPerBox} onChange={(e) => setEditingProduct({ ...editingProduct, weightPerBox: parseFloat(e.target.value) || 0 })} className="w-full px-6 py-4 bg-indigo-50 border-2 border-indigo-200 rounded-2xl font-black text-xl text-indigo-700" />
+                    <input required type="number" step="0.01" value={editingProduct.weight} onChange={(e) => setEditingProduct({ ...editingProduct, weight: parseFloat(e.target.value) || 0 })} className="w-full px-6 py-4 bg-indigo-50 border-2 border-indigo-200 rounded-2xl font-black text-xl text-indigo-700" />
                   </div>
                 )}
                 <button type="submit" className="w-full py-5 bg-indigo-600 text-white rounded-[2rem] font-black uppercase tracking-widest shadow-xl hover:bg-indigo-700 transition-all">Сохранить</button>

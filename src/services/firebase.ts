@@ -1,4 +1,3 @@
-// src/services/firebase.ts
 import { initializeApp } from "firebase/app";
 import {
   getFirestore,
@@ -27,61 +26,41 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
-// Тип для универсальной подписки на коллекцию
-type CollectionCallback<T> = (data: (T & { id: string })[]) => void;
-
+// Универсальный объект для работы с коллекциями
 export const firebaseDb = {
-  /**
-   * Подписка на коллекцию Firestore
-   * @param collectionName Название коллекции
-   * @param callback Функция, вызываемая при обновлении данных
-   * @returns Функция для отписки
-   */
   subscribe: <T extends object>(
     collectionName: string,
-    callback: CollectionCallback<T>
-  ): (() => void) => {
+    callback: (data: (T & { id: string })[]) => void
+  ) => {
     const colRef = collection(db, collectionName);
-    const unsubscribe = onSnapshot(
+    return onSnapshot(
       colRef,
       (snapshot: QuerySnapshot<DocumentData>) => {
-        const data: (T & { id: string })[] = snapshot.docs.map(doc => ({
+        const data = snapshot.docs.map(doc => ({
           id: doc.id,
           ...(doc.data() as T)
         }));
         callback(data);
       },
       (error: FirestoreError) => {
-        console.error(`Ошибка подписки на коллекцию "${collectionName}":`, error);
+        console.error(`Ошибка подписки на ${collectionName}:`, error);
       }
     );
-    return unsubscribe;
   },
 
-  /**
-   * Сохранение или обновление документа
-   * @param collectionName Название коллекции
-   * @param id ID документа
-   * @param data Данные документа
-   */
   save: async <T extends object>(collectionName: string, id: string, data: T) => {
     try {
       await setDoc(doc(db, collectionName, id), data, { merge: true });
     } catch (error) {
-      console.error(`Ошибка при сохранении документа в "${collectionName}":`, error);
+      console.error(`Ошибка при сохранении документа в ${collectionName}:`, error);
     }
   },
 
-  /**
-   * Удаление документа из коллекции
-   * @param collectionName Название коллекции
-   * @param id ID документа
-   */
   delete: async (collectionName: string, id: string) => {
     try {
       await deleteDoc(doc(db, collectionName, id));
     } catch (error) {
-      console.error(`Ошибка при удалении документа из "${collectionName}":`, error);
+      console.error(`Ошибка при удалении документа из ${collectionName}:`, error);
     }
   }
 };

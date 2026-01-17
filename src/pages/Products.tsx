@@ -66,7 +66,7 @@ const ProductsPage: React.FC = () => {
                     </span>
                   </div>
                   {product.type === ProductType.BOXED && (
-                    <p className="text-xs font-black text-indigo-700 uppercase ml-6 italic">Вес кор: {product.weightPerBox} кг</p>
+                    <p className="text-xs font-black text-indigo-700 uppercase ml-6 italic">Вес кор: {product.weight} кг</p>
                   )}
                 </div>
 
