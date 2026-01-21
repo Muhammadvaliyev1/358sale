@@ -78,6 +78,9 @@ const HistoryPage: React.FC = () => {
     printWindow.document.close();
   };
 
+  const [dateSearchTerm] = useState('');
+  const [dateSearch, setDateSearch] = useState('');
+
   const handleReturn = (sale: Sale) => {
     if (!confirm('Отменить чек полностью? Товары вернутся на склад.')) return;
     setProducts(prev => prev.map(p => {
@@ -87,6 +90,26 @@ const HistoryPage: React.FC = () => {
     const debtToReduce = sale.total - sale.amountPaid;
     setClients(prev => prev.map(c => c.id === sale.clientId ? { ...c, debt: Math.max(0, c.debt - debtToReduce) } : c));
     setSales(prev => prev.filter(s => s.id !== sale.id));
+  };
+
+  const toDate = (date: any): Date => {
+  if (!date) return new Date(0);
+
+  // Firestore Timestamp
+  if (typeof date === 'object' && 'seconds' in date) {
+    return new Date(date.seconds * 1000);
+  }
+
+  // string | number | Date
+  return new Date(date);
+};
+
+  const isSameDay = (date1: Date, date2: Date) => {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
   };
 
   const saveEditedSale = () => {
@@ -146,11 +169,26 @@ const HistoryPage: React.FC = () => {
     setEditProductSearch('');
   };
 
-  const filteredSales = sales.filter(s => 
-    s.clientName.toLowerCase().includes(clientSearchTerm.toLowerCase()) &&
-    s.id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredSales = sales.filter(sale => {
+  const clientMatch = sale.clientName
+    .toLowerCase()
+    .includes(clientSearchTerm.toLowerCase());
 
+  const idMatch = sale.id
+    .toLowerCase()
+    .includes(searchTerm.toLowerCase());
+
+  let dateMatch = true;
+
+  if (dateSearch) {
+    const selectedDate = new Date(dateSearch);
+    const saleDate = toDate(sale.date);
+
+    dateMatch = isSameDay(selectedDate, saleDate);
+  }
+
+  return clientMatch && idMatch && dateMatch;
+});
   const filteredEditProducts = products.filter(p => p.name.toLowerCase().includes(editProductSearch.toLowerCase())).slice(0, 5);
 
   return (
@@ -163,6 +201,12 @@ const HistoryPage: React.FC = () => {
         <div className="flex flex-wrap gap-4">
           <input type="text" placeholder="🔍 Поиск клиента..." value={clientSearchTerm} onChange={(e) => setClientSearchTerm(e.target.value)} className="px-5 py-3 border-2 border-slate-400 rounded-2xl font-black text-black outline-none focus:border-indigo-600 shadow-sm" />
           <input type="text" placeholder="ID чека..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="px-5 py-3 border-2 border-slate-400 rounded-2xl font-black text-black outline-none focus:border-indigo-600 shadow-sm" />
+          <input
+            type="date"
+            value={dateSearch}
+            onChange={(e) => setDateSearch(e.target.value)}
+            className="px-5 py-3 border-2 border-slate-400 rounded-2xl font-black outline-none"
+          />
         </div>
       </div>
 
