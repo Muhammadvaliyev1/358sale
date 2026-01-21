@@ -59,6 +59,7 @@ const HistoryPage: React.FC = () => {
             </div>
           </div>
           <div class="hr"></div>
+          <div style="font-size: 18px; font-weight: 900; color: #000;">ЧЕК: #${sale.id}</div>
           <div style="font-size: 18px; font-weight: 900; color: #000;">ДАТА: ${new Date(sale.date).toLocaleString('ru-RU')}</div>
           <div style="font-size: 18px; font-weight: 900; color: #000;">КЛИЕНТ: <span class="bold uppercase">${sale.clientName}</span></div>
           <div class="hr"></div>
